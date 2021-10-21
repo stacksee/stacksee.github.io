@@ -1,0 +1,142 @@
+<html>
+<head>
+
+    <script type="text/javascript">
+        function notable(e) {
+            var notable = notableTemplate.content.cloneNode(true);
+
+            notable.querySelector(".notableName").append(e.name);
+
+            if (e.remainingStats) {
+                e.remainingStats.forEach(remaining => {
+                    notable.querySelector(".remainingStats").insertAdjacentHTML('beforeend', `<li>${remaining}</li>`);
+                });
+            }
+
+            if (e.removedStats) {
+                e.removedStats.forEach(removed => {
+                    notable.querySelector(".removedStats").insertAdjacentHTML('beforeend', `<li>${removed}</li>`);
+                });
+            }
+
+            if (e.addedStats) {
+                e.addedStats.forEach(added => {
+                    notable.querySelector(".addedStats").insertAdjacentHTML('beforeend', `<li>${added}</li>`);
+                });
+            }
+
+            return notable;
+        }
+
+        function render(data) {
+            let notableTemplate = document.querySelector("#notableTemplate");
+
+            let changedContainer = document.querySelector("#changed");
+            data.changed.forEach(e => {
+                changedContainer.appendChild(notable(e));
+            });
+
+            let addedContainer = document.querySelector("#added");
+            data.added.forEach(e => {
+                addedContainer.appendChild(notable(e));
+            });
+
+            let removedContainer = document.querySelector("#removed");
+            data.removed.forEach(e => {
+                removedContainer.appendChild(notable(e));
+            });
+        }
+
+        function onload() {
+            fetch("poe316notablechanges.json")
+              .then(response => response.json())
+              .then(json => render(json));
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #000000;
+            color: #a38d6d;
+            font-family: Verdana,Arial,Helvetica,sans-serif;
+            font-size: 80%;
+            line-height: 1.3;
+        }
+        a {
+            color: #a38d6d;
+        }
+        h3 {
+            margin: 0px 0px 6px 0px;
+        }
+        ul {
+            padding: 0px 20px;
+            margin: 0px;
+        }
+        li {
+        }
+        .notable {
+            border-color: #aaaaaa;
+            border-radius: 5px;
+            border-style: solid;
+            border-width: 1px;
+            padding: 15px 20px;
+            margin: 20px 0px;
+            max-width: 600px;
+        }
+        .notableName {
+            font-size: 110%;
+            font-weight: bold;
+        }
+        .remainingStats {
+            color: #aaaaaa;
+        }
+        .removedStats {
+            color: #ee6666;
+        }
+        .addedStats {
+            color: #66ee66;
+        }
+        ul.removedStats {
+            margin-top: 10px;
+        }
+    </style>
+
+</head>
+
+<body onload="onload();">
+    <h1>Path of exile 3.16 passive notable changes</h1>
+    <p>Disclaimer: 
+        <ul>
+            <li>Notables are matched on name-to-name basis so if there are notables that changed their name they will show as removed and added instead of changed / unmodified.</li>
+            <li>Changes here are run against the passive tree dump from 3.15 and the v3 version of passive tree dump for 3.16 found <a href="https://github.com/grindinggear/skilltree-export">here</a>.</li>
+            <li>No guarantee is given that the provided information is correct. Make sure to double check what the notable provides in 3.16.</li>
+            <li>Reference</li>
+            <ul>
+                <li class="remainingStats">Unchanged stat</li>
+                <li class="addedStats">Added stat</li>
+                <li class="removedStats">Removed stat</li>
+            </ul>
+        </ul>
+    </p>
+
+    <template id="notableTemplate">
+        <div class="notable">
+            <h3 class="notableName"></h3>
+            <ul class="remainingStats"></ul>
+            <ul class="addedStats"></ul>
+            <ul class="removedStats"></ul>
+        </div>
+    </template>
+
+    <section id="changed">
+        <h2><a name="changed">Changed notables</a></h2>
+    </section>
+    <section id="added">
+        <h2><a name="added">New notables</a></h2>
+    </section>
+    <section id="removed">
+        <h2><a name="removed">Removed notables</a></h2>
+    </section>
+</body>
+
+</html>
